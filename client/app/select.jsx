@@ -7,7 +7,7 @@ function select() {
         <option disabled selected>
           Who shot first?
         </option>
-        <option>Han Solo</option>
+        <option >Han Solo</option>
         <option>Greedo</option>
       </select>
     </div>
