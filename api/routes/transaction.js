@@ -4,12 +4,29 @@ import { Transaction } from "../models/transaction.js";
 import id from "./product.js";
 import { Expense } from "../models/expense.js";
 import { Product } from "../models/product.js";
-router.get("/", async (req, res) => {
-  const transactions = await Transaction.find({});
-  res.json(transactions);
+// router.get("/", async (req, res) => {
+//   const transactions = await Transaction.find({});
+//   res.json(transactions);
+// });
+router.get("/test", async (req, res) => {
+  const { d } = req.query;
+  const { date } = req.body;
+
+  const da = "2024-11-08T15:11:01.599+00:00";
+  const date1 = new Date(da);
+  console.log(date1.toLocaleDateString());
+
+  const transaction = await Transaction.find({
+    createdAt: { $gte: date1.toLocaleDateString() },
+  });
+  res.json(transaction);
 });
 router.post("/", async (req, res) => {
-  const { name, category, price, amount, mpesa_id, id, method } = req.body;
+  let { name, category, price, amount, mpesa_id, id, method } = req.body;
+  console.log("visited");
+  console.log(req.body);
+  // res.json(req.body);
+  amount = parseInt(amount);
 
   const product = await Product.findById(`${id}`);
 
@@ -30,11 +47,56 @@ router.post("/", async (req, res) => {
     { $set: { category: cat, sold, sales } }
   );
   const newamount = product.amount - amount;
+  console.log(product.amount);
   const newproduct = await Product.updateOne(
     { _id: id },
     { $set: { amount: newamount } }
   );
 
   res.json(transaction);
+});
+router.get("/", async (req, res) => {
+  console.log("visted transaction");
+  const { q, c, query } = req.query;
+
+  console.log("this is c", c, "this is q", q, "this is query", query);
+
+  if (!q) {
+    console.log("not q");
+    console.log(query);
+    const transaction = await Transaction.find({});
+    const newproduct = transaction.filter((item) => {
+      return item["name"].toLocaleLowerCase().includes(query);
+    });
+    console.log(newproduct);
+    return res.json(newproduct);
+  }
+
+  try {
+    if (c) {
+      console.log("in c");
+      const category = { category: c };
+      const transaction = await Transaction.find(category).sort({
+        createdAt: parseInt(q),
+      });
+      console.log(transaction);
+      const newproduct = transaction.filter((item) => {
+        return item["name"].toLocaleLowerCase().includes(query);
+      });
+      // console.log(newproduct);
+      return res.json(newproduct);
+    }
+    console.log("outside c");
+    const transaction = await Transaction.find({}).sort({
+      createdAt: parseInt(q),
+    });
+    console.log(transaction);
+    const newproduct = transaction.filter((item) => {
+      return item["name"].toLocaleLowerCase().includes(query);
+    });
+    res.json(newproduct);
+  } catch (er) {
+    return res.json({ erro: "erro" });
+  }
 });
 export default router;

@@ -13,6 +13,12 @@ router.get("/test", async (req, res) => {
   console.log(req.query);
   res.json(product);
 });
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  console.log(product);
+  res.json(product);
+});
 router.get("/filter", async (req, res) => {
   // const { category } = req.body;
   // console.log(category);

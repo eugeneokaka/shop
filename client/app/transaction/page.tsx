@@ -38,7 +38,7 @@ export default function Home() {
   };
   const fetchdata = async () => {
     const res = await fetch(
-      `http://localhost:5000/product?q=${q}&c=${category}&query=${query}`,
+      `http://localhost:5000/transaction?q=${q}&c=${category}&query=${query}`,
       {
         cache: "no-store",
       }
@@ -93,7 +93,7 @@ export default function Home() {
         </div>
       </div>
 
-      <h1 className="text-center text-2xl font-bold">Items</h1>
+      <h1 className="text-center text-2xl font-bold">Transactions</h1>
 
       <div className="w-3/4 mt-14 mb-96  mx-auto">
         <div>
@@ -104,10 +104,10 @@ export default function Home() {
                 <tr className="">
                   <th>name</th>
                   <th>category</th>
-                  <th>bprice</th>
+                  {/* <th>bprice</th> */}
                   <th>price</th>
                   <th>amount</th>
-                  <th>date created</th>
+                  <th>date</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,15 +116,10 @@ export default function Home() {
                   <tr>
                     <th>{product.name}</th>
                     <td>{product.category}</td>
-                    <td>{product.bprice}</td>
+                    {/* <td>{product.bprice}</td> */}
                     <td>{product.price}</td>
                     <td>{product.amount}</td>
                     <td>{new Date(product.createdAt).toDateString()}</td>
-                    <td>
-                      <Link href={`/buy/${product._id}`}>
-                        <button className="btn btn-accent">sell </button>
-                      </Link>
-                    </td>
                   </tr>
                 ))}
               </tbody>

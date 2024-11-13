@@ -34,8 +34,8 @@ export default function RootLayout({
             <h1 className="font-bold text-2xl">Shop</h1>
           </div>
           <div className="flex  gap-4 font-bold">
-            <Link href={"#"}>item</Link>
-            <Link href={"#"}>Transaction</Link>
+            <Link href={"/"}>item</Link>
+            <Link href={"/transaction"}>Transaction</Link>
             <Link href={"#"}>Dashboard</Link>
           </div>
         </nav>
