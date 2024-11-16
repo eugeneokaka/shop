@@ -18,6 +18,12 @@ export default function Home() {
   const [q, setq] = useState("1");
   const [category, setcategory] = useState("");
   const [query, setquery] = useState("");
+  const [date, setdate] = useState<Date | undefined>(undefined);
+  const hanldedate = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectdate = e.target.value ? new Date(e.target.value) : undefined;
+    setdate(selectdate);
+    console.log(selectdate);
+  };
   const handleselect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const qu = e.target.value;
     setq(qu);
@@ -38,7 +44,7 @@ export default function Home() {
   };
   const fetchdata = async () => {
     const res = await fetch(
-      `http://localhost:5000/transaction?q=${q}&c=${category}&query=${query}`,
+      `http://localhost:5000/transaction?q=${q}&c=${category}&query=${query}&d=${date}`,
       {
         cache: "no-store",
       }
@@ -52,7 +58,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchdata();
-  }, [q, category, query]);
+  }, [q, category, query, date]);
   return (
     <div className="h-full">
       <div className="flex justify-between">
@@ -91,6 +97,9 @@ export default function Home() {
             <option value={""}>all</option>
           </select>
         </div>
+      </div>
+      <div>
+        <input type="date" onChange={hanldedate} />
       </div>
 
       <h1 className="text-center text-2xl font-bold">Transactions</h1>
