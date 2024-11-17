@@ -36,7 +36,7 @@ export default function RootLayout({
           <div className="flex  gap-4 font-bold">
             <Link href={"/"}>item</Link>
             <Link href={"/transaction"}>Transaction</Link>
-            <Link href={"#"}>Dashboard</Link>
+            <Link href={"/dashboard"}>Dashboard</Link>
           </div>
         </nav>
         {children}

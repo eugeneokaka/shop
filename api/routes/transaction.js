@@ -122,15 +122,18 @@ router.get("/", async (req, res) => {
           createdAt: {
             $gte: date,
           },
-        });
+        })
+        .limit(5);
       const newproduct = transaction.filter((item) => {
         return item["name"].toLocaleLowerCase().includes(query);
       });
       return res.json(newproduct);
     }
-    const transaction = await Transaction.find({}).sort({
-      createdAt: parseInt(q),
-    });
+    const transaction = await Transaction.find({})
+      .sort({
+        createdAt: parseInt(q),
+      })
+      .limit(5);
     const newproduct = transaction.filter((item) => {
       return item["name"].toLocaleLowerCase().includes(query);
     });
