@@ -11,6 +11,7 @@ interface Product {
   price: number;
   amount: number;
   createdAt: Date;
+  profit: number;
   _id: string;
 }
 export default function Home() {
@@ -40,7 +41,7 @@ export default function Home() {
     const res = await fetch(
       `http://localhost:5000/product?q=${q}&c=${category}&query=${query}`,
       {
-        cache: "no-store",
+        cache: "no-cache",
       }
     );
 
@@ -107,6 +108,7 @@ export default function Home() {
                   <th>bprice</th>
                   <th>price</th>
                   <th>amount</th>
+                  <th>profit</th>
                   <th>date created</th>
                 </tr>
               </thead>
@@ -119,6 +121,7 @@ export default function Home() {
                     <td>{product.bprice}</td>
                     <td>{product.price}</td>
                     <td>{product.amount}</td>
+                    <td>{product.profit}</td>
                     <td>{new Date(product.createdAt).toDateString()}</td>
                     <td>
                       <Link href={`/buy/${product._id}`}>

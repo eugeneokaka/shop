@@ -91,6 +91,7 @@ router.get("/", async (req, res) => {
       return res.json(newproduct);
       // return res.json(product);
     }
+
     const product = await Product.find({}).sort({
       createdAt: parseInt(q),
     });
@@ -105,25 +106,30 @@ router.get("/", async (req, res) => {
   // console.log(expense.category["food"]);
 });
 router.post("/", async (req, res) => {
-  const { name, category, price, amount, bprice } = req.body;
-  // const product = await Product.create({
-  //   name,
-  //   amount,
-  //   price,
-  //   category,
-  // });
+  try {
+    const { name, category, price, amount, bprice } = req.body;
+    // const product = await Product.create({
+    //   name,
+    //   amount,
+    //   price,
+    //   category,
+    // });
 
-  const expense = await Expense.findById("671beababa7e10f4a9340e86");
-  const newtotal = expense.total + bprice;
-  const cat = expense.category;
-  // cat[category] = cat[category] + bprice;
-  // console.log(cat, newtotal);
-  const product = await Product.create(req.body);
-  const newexpense = await Expense.updateMany(
-    { _id: id },
-    { $set: { total: newtotal } }
-  );
+    const expense = await Expense.findById("671beababa7e10f4a9340e86");
 
-  res.json({ product, newexpense });
+    const newtotal = expense.total + bprice;
+    const cat = expense.category;
+
+    const product = await Product.create(req.body);
+    const newexpense = await Expense.updateMany(
+      { _id: id },
+      { $set: { total: newtotal } }
+    );
+
+    res.json({ product, newexpense });
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
 });
 export default router;

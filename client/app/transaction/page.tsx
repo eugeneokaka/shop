@@ -10,6 +10,7 @@ interface Product {
   bprice: number;
   price: number;
   amount: number;
+  profit: number;
   createdAt: Date;
   _id: string;
 }
@@ -116,6 +117,7 @@ export default function Home() {
                   {/* <th>bprice</th> */}
                   <th>price</th>
                   <th>amount</th>
+                  <th>profit</th>
                   <th>date</th>
                 </tr>
               </thead>
@@ -128,6 +130,7 @@ export default function Home() {
                     {/* <td>{product.bprice}</td> */}
                     <td>{product.price}</td>
                     <td>{product.amount}</td>
+                    <td>{product.profit}</td>
                     <td>{new Date(product.createdAt).toDateString()}</td>
                   </tr>
                 ))}

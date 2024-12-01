@@ -10,38 +10,55 @@ import { Product } from "../models/product.js";
 // });
 
 router.post("/", async (req, res) => {
-  let { name, category, price, amount, mpesa_id, id, method } = req.body;
-  console.log("visited");
-  console.log(req.body);
-  // res.json(req.body);
-  amount = parseInt(amount);
+  try {
+    let { name, category, price, amount, mpesa_id, id, method } = req.body;
+    console.log("visited");
+    console.log(req.body);
+    // res.json(req.body);
+    amount = parseInt(amount);
 
-  const product = await Product.findById(`${id}`);
+    const product = await Product.findById(`${id}`);
+    console.log(product);
+    if (product.amount < amount) {
+      return res.json("not enought");
+    }
+    const transaction = await Transaction.create(req.body);
+    const expense = await Expense.findById("671beababa7e10f4a9340e86");
+    const sold = expense.sold + price;
+    console.log("sold:", sold);
+    const sales = sold - expense.total;
+    console.log("sales", sales);
+    const cat = expense.category;
+    cat[category] = cat[category] + price;
+    console.log("cat", cat);
+    const newexpense = await Expense.updateMany(
+      { _id: "671beababa7e10f4a9340e86" },
+      { $set: { category: cat, sold, sales } }
+    );
+    const newamount = product.amount - amount;
+    const newsales = product.sales + price;
+    const newnumofsales = product.number_sold + 1;
+    const newprofit = product.sales + price - product.bprice;
 
-  if (product.amount < amount) {
-    return res.json("not enought");
+    console.log(newprofit);
+    const newproduct = await Product.updateOne(
+      { _id: id },
+      {
+        $set: {
+          amount: newamount,
+          number_sold: newnumofsales,
+          profit: newprofit,
+          sales: newsales,
+        },
+      }
+    );
+
+    res.json(transaction);
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+    throw new Error(err);
   }
-  const transaction = await Transaction.create(req.body);
-  const expense = await Expense.findById("671beababa7e10f4a9340e86");
-  const sold = expense.sold + price;
-  console.log("sold:", sold);
-  const sales = sold - expense.total;
-  console.log("sales", sales);
-  const cat = expense.category;
-  cat[category] = cat[category] + price;
-  console.log("cat", cat);
-  const newexpense = await Expense.updateMany(
-    { _id: "671beababa7e10f4a9340e86" },
-    { $set: { category: cat, sold, sales } }
-  );
-  const newamount = product.amount - amount;
-  console.log(product.amount);
-  const newproduct = await Product.updateOne(
-    { _id: id },
-    { $set: { amount: newamount } }
-  );
-
-  res.json(transaction);
 });
 router.get("/test", async (req, res) => {
   const { d } = req.query;
@@ -122,18 +139,20 @@ router.get("/", async (req, res) => {
           createdAt: {
             $gte: date,
           },
-        })
-        .limit(5);
+        });
+      // .limit(5);
+      if (transaction.length < 1) {
+        return res.json(transaction);
+      }
       const newproduct = transaction.filter((item) => {
         return item["name"].toLocaleLowerCase().includes(query);
       });
       return res.json(newproduct);
     }
-    const transaction = await Transaction.find({})
-      .sort({
-        createdAt: parseInt(q),
-      })
-      .limit(5);
+    const transaction = await Transaction.find({}).sort({
+      createdAt: parseInt(q),
+    });
+    // .limit(5);
     const newproduct = transaction.filter((item) => {
       return item["name"].toLocaleLowerCase().includes(query);
     });

@@ -2,7 +2,7 @@
 
 import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
-import { useState, useEffect } from "react";
+
 import {
   Card,
   CardContent,
@@ -17,18 +17,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-interface Category {
-  clothes: number;
-  electronics: number;
-  food: number;
-  others: number;
-  stationary: number;
-}
 interface expensedata {
   total: number;
   sales: number;
   sold: number;
-  category: Category;
 }
 interface stats {
   expense: expensedata;
@@ -37,85 +29,54 @@ interface stats {
   maxprofit: object;
   mostsolditme: object;
 }
+let getdata: stats = {};
+const fetchdata = async () => {
+  const res = await fetch(`http://localhost:5000/expense`, {
+    cache: "no-cache",
+  });
+
+  getdata = await res.json();
+};
+fetchdata();
+const chartData = [
+  { browser: "chrome", visitors: 187, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 275, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+];
+
+const chartConfig = {
+  visitors: {
+    label: "Visitors",
+  },
+  chrome: {
+    label: "Chrome",
+    color: "hsl(var(--chart-1))",
+  },
+  safari: {
+    label: "Safari",
+    color: "hsl(var(--chart-2))",
+  },
+  firefox: {
+    label: "Firefox",
+    color: "hsl(var(--chart-3))",
+  },
+  edge: {
+    label: "Edge",
+    color: "hsl(var(--chart-4))",
+  },
+  other: {
+    label: "Other",
+    color: "hsl(var(--chart-5))",
+  },
+} satisfies ChartConfig;
 
 export function Bar2() {
-  const [data, setdata] = useState<stats>();
-  const fetchdata = async () => {
-    const res = await fetch(`http://localhost:5000/expense`, {
-      cache: "no-cache",
-    });
-
-    const getdata: stats = await res.json();
-
-    setdata(getdata);
-    console.log(getdata);
-  };
-  useEffect(() => {
-    fetchdata();
-  }, []);
-  const chartData = [
-    {
-      browser: "food",
-      visitors: data?.expense.category.food,
-      fill: "var(--color-chrome)",
-    },
-    {
-      browser: "clothe",
-      visitors: data?.expense.category.clothes,
-      fill: "var(--color-chrome)",
-    },
-    // {
-    //   browser: "clothes",
-    //   visitors: data?.expense.category.clothes,
-    //   fill: "var(--color-safari)",
-    // },
-    {
-      browser: "electronics",
-      visitors: data?.expense.category.electronics,
-      fill: "var(--color-firefox)",
-    },
-    {
-      browser: "others",
-      visitors: data?.expense.category.others,
-      fill: "var(--color-edge)",
-    },
-    {
-      browser: "stationary",
-      visitors: data?.expense.category.stationary,
-      fill: "var(--color-other)",
-    },
-  ];
-
-  const chartConfig = {
-    visitors: {
-      label: "Sales",
-    },
-    food: {
-      label: "food",
-      color: "hsl(var(--chart-1))",
-    },
-    clothe: {
-      label: "clothe",
-      color: "hsl(var(--chart-2))",
-    },
-    electronics: {
-      label: "electronics",
-      color: "hsl(var(--chart-3))",
-    },
-    others: {
-      label: "others",
-      color: "hsl(var(--chart-4))",
-    },
-    stationary: {
-      label: "stationary",
-      color: "hsl(var(--chart-5))",
-    },
-  } satisfies ChartConfig;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sales by category</CardTitle>
-        <h1></h1>
+        <CardTitle>Bar Chart - Active</CardTitle>
 
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
@@ -157,12 +118,12 @@ export function Bar2() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        {/* <div className="flex gap-2 font-medium leading-none">
+        <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
           Showing total visitors for the last 6 months
-        </div> */}
+        </div>
       </CardFooter>
     </Card>
   );
